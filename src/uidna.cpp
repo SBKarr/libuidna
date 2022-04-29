@@ -10,3 +10,5 @@
 #include "u_edits.cc"
 #include "u_norm2.cc"
 #include "u_uts46.cc"
+
+#include "u_idn2.cc"

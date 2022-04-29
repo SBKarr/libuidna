@@ -37,25 +37,45 @@ $(SHARED_LIB): $(OUTDIR)/$(LIBNAME).o
 	@$(MKDIR) $(OUTDIR)
 	$(CXX) -shared $(LDFLAGS) $^ -o $@
 
-install-static:
+install-static: $(STATIC_LIB)
 	@$(MKDIR) $(PREFIX)/lib
 	$(CP) $(STATIC_LIB) $(PREFIX)/lib
 
-install-shared:
+install-shared: $(SHARED_LIB)
+	@$(MKDIR) $(PREFIX)/lib
 	$(CP) $(SHARED_LIB) $(PREFIX)/lib
 
 install-include:
-	@$(MKDIR) $(PREFIX)/include/libuidna
-	$(CP) -r include/* $(PREFIX)/include/libuidna
+	@$(MKDIR) $(PREFIX)/include
+	$(CP) -r include/* $(PREFIX)/include
 
-install: install-static install-shared install-include
+install-pc: $(PREFIX)/lib/pkgconfig/$(LIBNAME).pc
+
+install: install-static install-shared install-include install-pc
 
 test: $(STATIC_LIB)
 	$(MAKE) -C tests/icu OUTDIR=$(abspath $(OUTDIR))
+	$(MAKE) -C tests/idn2 OUTDIR=$(abspath $(OUTDIR))
 
 run-test: test
 	chmod +x $(OUTDIR)/uts46test
 	$(OUTDIR)/uts46test
+	chmod +x $(OUTDIR)/idn2-test-lookup
+	$(OUTDIR)/idn2-test-lookup
+
+$(PREFIX)/lib/pkgconfig/$(LIBNAME).pc:
+	@$(MKDIR) $(PREFIX)/lib/pkgconfig
+	@echo 'prefix=$(PREFIX)' > $@
+	@echo 'exec_prefix=$${prefix}' >> $@
+	@echo 'includedir=$(PREFIX)/include' >> $@
+	@echo 'libdir=$(PREFIX)/lib' >> $@
+	@echo '' >> $@
+	@echo 'Name: $(LIBNAME)' >> $@
+	@echo 'Description: IDN Library, extracted from ICU ' >> $@
+	@echo 'Version: 0.1.0' >> $@
+	@echo 'Cflags: -I$${includedir}' >> $@
+	@echo 'Libs: -L$${libdir} -l$(LIBNAME:lib%=%) -lstdc++' >> $@
+	@echo 'Libs.private:  -L$(PREFIX)/lib' >> $@
 
 clean:
 	$(RM) $(STATIC_LIB) $(SHARED_LIB)

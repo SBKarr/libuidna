@@ -111,7 +111,7 @@ static inline UBool isPrintable(UChar32 c) {
 	return c <= 0x7E && (c >= 0x20 || c == 9 || c == 0xA || c == 0xD);
 }
 
-static constexpr auto OptionsCommon = UIDNA_USE_STD3_RULES | UIDNA_CHECK_BIDI | UIDNA_CHECK_CONTEXTJ|UIDNA_CHECK_CONTEXTO;
+static constexpr auto OptionsCommon = UIDNA_USE_STD3_RULES | UIDNA_CHECK_BIDI | UIDNA_CHECK_CONTEXTJ | UIDNA_CHECK_CONTEXTO;
 static constexpr auto OptionsNonTrans = OptionsCommon | UIDNA_NONTRANSITIONAL_TO_ASCII|UIDNA_NONTRANSITIONAL_TO_UNICODE;
 static const int32_t indentLevel_offset = 3;
 static int32_t execCount = 0;

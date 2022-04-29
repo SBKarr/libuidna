@@ -7,8 +7,6 @@ CP ?= cp -f
 
 PREFIX ?= /usr/local
 
-LIBNAME ?= libuidna
-
 UTS46TEST := $(OUTDIR)/uts46test
 
 CFLAGS += -fPIC -std=c++17 -g

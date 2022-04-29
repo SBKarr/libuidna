@@ -33,29 +33,6 @@ typedef enum UNormalizationCheckResult {
 	UNORM_MAYBE
 } UNormalizationCheckResult;
 
-/*
- * IDNA error bit set values.
- * When a domain name or label fails a processing step or does not meet the
- * validity criteria, then one or more of these error bits are set.
- */
-enum {
-    UIDNA_ERROR_EMPTY_LABEL=1,
-    UIDNA_ERROR_LABEL_TOO_LONG=2,
-    UIDNA_ERROR_DOMAIN_NAME_TOO_LONG=4,
-    UIDNA_ERROR_LEADING_HYPHEN=8,
-    UIDNA_ERROR_TRAILING_HYPHEN=0x10,
-    UIDNA_ERROR_HYPHEN_3_4=0x20,
-    UIDNA_ERROR_LEADING_COMBINING_MARK=0x40,
-    UIDNA_ERROR_DISALLOWED=0x80,
-    UIDNA_ERROR_PUNYCODE=0x100,
-    UIDNA_ERROR_LABEL_HAS_DOT=0x200,
-    UIDNA_ERROR_INVALID_ACE_LABEL=0x400,
-    UIDNA_ERROR_BIDI=0x800,
-    UIDNA_ERROR_CONTEXTJ=0x1000,
-    UIDNA_ERROR_CONTEXTO_PUNCTUATION=0x2000,
-    UIDNA_ERROR_CONTEXTO_DIGITS=0x4000
-};
-
 struct UDataInfo {
     uint16_t size;
     uint16_t reservedWord;
