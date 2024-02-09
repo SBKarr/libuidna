@@ -4,6 +4,8 @@
 
 namespace uidna {
 
+static constexpr size_t DefaultBufferSize = 2048;
+
 U_CAPI const char *u_errorName(UErrorCode code);
 
 static int errorToIdn2(UErrorCode err) {
@@ -28,14 +30,14 @@ extern "C" int idn2_lookup_u8(const uint8_t *src, uint8_t **lookupname, int flag
 	}
 
 	if (flags & IDN2_USE_STD3_ASCII_RULES) {
-		options |= IDN2_USE_STD3_ASCII_RULES;
+		options |= UIDNA_USE_STD3_RULES;
 	}
 
 	if (flags & IDN2_NONTRANSITIONAL) {
 		options |= UIDNA_NONTRANSITIONAL_TO_ASCII;
 	}
 
-	char *buf = new char[512];
+	char *buf = new char[DefaultBufferSize];
 
 	UIDNAInfo info;
 	UErrorCode error = U_ZERO_ERROR;
@@ -81,19 +83,66 @@ extern "C" int idn2_lookup_ul(const char *src, char **lookupname, int flags) {
 	}
 
 	if (flags & IDN2_USE_STD3_ASCII_RULES) {
-		options |= IDN2_USE_STD3_ASCII_RULES;
+		options |= UIDNA_USE_STD3_RULES;
 	}
 
 	if (flags & IDN2_NONTRANSITIONAL) {
 		options |= UIDNA_NONTRANSITIONAL_TO_ASCII;
 	}
 
-	char *buf = new char[512];
+	char *buf = new char[DefaultBufferSize];
 
 	UIDNAInfo info;
 	UErrorCode error = U_ZERO_ERROR;
 
 	u_nameToASCII_UTF8(options, (const char *)src, uprv_strlen((const char *)src), buf, 512, &info, &error);
+
+	if (error == U_ZERO_ERROR && info.errors == 0) {
+		if (lookupname) {
+			*lookupname = buf;
+		} else {
+			delete [] buf;
+		}
+		return IDN2_OK;
+	} else {
+		if (error != U_ZERO_ERROR) {
+			delete [] buf;
+			return errorToIdn2(error);
+		} else {
+			if (info.errors == UIDNA_ERROR_EMPTY_LABEL) {
+				if (lookupname) {
+					*lookupname = buf;
+				} else {
+					delete [] buf;
+				}
+				return IDN2_OK;
+			}
+			return -info.errors;
+		}
+	}
+}
+
+extern "C" int idn2_to_unicode_8z8z(const char *src, char **lookupname, int flags) {
+	uint32_t options = UIDNA_CHECK_BIDI | UIDNA_CHECK_CONTEXTJ | UIDNA_CHECK_CONTEXTO; // IDN2008
+
+	if (flags & IDN2_NO_TR46) {
+		options = 0;
+	}
+
+	if (flags & IDN2_USE_STD3_ASCII_RULES) {
+		options |= UIDNA_USE_STD3_RULES;
+	}
+
+	if (flags & IDN2_NONTRANSITIONAL) {
+		options |= UIDNA_NONTRANSITIONAL_TO_UNICODE;
+	}
+
+	char *buf = new char[DefaultBufferSize];
+
+	UIDNAInfo info;
+	UErrorCode error = U_ZERO_ERROR;
+
+	auto retLen = u_nameToUnicodeUTF8(0, (const char *)src, uprv_strlen((const char *)src), buf, 2048, &info, &error);
 
 	if (error == U_ZERO_ERROR && info.errors == 0) {
 		if (lookupname) {

@@ -24,6 +24,7 @@ extern "C"
 #endif
 
 #define IDN2_VERSION "2.3.2-libuidna"
+#define IDN2_VERSION_NUMBER 0x02030002
 #define IDN2_LABEL_MAX_LENGTH 63
 #define IDN2_DOMAIN_MAX_LENGTH 255
 
@@ -42,6 +43,7 @@ typedef enum {
 
 extern _IDN2_API int idn2_lookup_u8(const uint8_t *src, uint8_t **lookupname, int flags);
 extern _IDN2_API int idn2_lookup_ul(const char *src, char **lookupname, int flags);
+extern _IDN2_API int idn2_to_unicode_8z8z(const char *src, char **lookupname, int flags);
 
 typedef enum {
 	IDN2_OK = 0,
@@ -74,6 +76,22 @@ typedef enum {
 	IDN2_INVALID_NONTRANSITIONAL = -313,
 	IDN2_ALABEL_ROUNDTRIP_FAILED = -314,
 } idn2_rc;
+
+typedef enum {
+	IDNA_SUCCESS = IDN2_OK,
+	IDNA_STRINGPREP_ERROR = IDN2_ENCODING_ERROR,
+	IDNA_PUNYCODE_ERROR = IDN2_PUNYCODE_BAD_INPUT,
+	IDNA_CONTAINS_NON_LDH = IDN2_ENCODING_ERROR,
+	IDNA_CONTAINS_LDH = IDNA_CONTAINS_NON_LDH,
+	IDNA_CONTAINS_MINUS = IDN2_ENCODING_ERROR,
+	IDNA_INVALID_LENGTH = IDN2_DISALLOWED,
+	IDNA_NO_ACE_PREFIX = IDN2_ENCODING_ERROR,
+	IDNA_ROUNDTRIP_VERIFY_ERROR = IDN2_ENCODING_ERROR,
+	IDNA_CONTAINS_ACE_PREFIX = IDN2_ENCODING_ERROR,
+	IDNA_ICONV_ERROR = IDN2_ENCODING_ERROR,
+	IDNA_MALLOC_ERROR = IDN2_MALLOC,
+	IDNA_DLOPEN_ERROR = IDN2_MALLOC
+} Idna_rc;
 
 extern _IDN2_API const char* idn2_strerror(int rc);
 extern _IDN2_API const char* idn2_strerror_name(int rc);
