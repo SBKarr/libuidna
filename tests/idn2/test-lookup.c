@@ -27,7 +27,20 @@
 #include <errno.h>
 
 #include <idn2.h>
+#if UIDNA_SOURCES
 #include <unistr.h>
+#else
+#include <unicode/ustring.h>
+
+static uint32_t * u8_to_u32 (const uint8_t *s, size_t n, uint32_t *resultbuf, size_t *lengthp) {
+	return NULL;
+}
+
+static uint8_t * u32_to_u8 (const uint32_t *s, size_t n, uint8_t *resultbuf, size_t *lengthp) {
+	return NULL;
+}
+
+#endif
 
 struct idna
 {
@@ -1143,7 +1156,7 @@ _decodeIdnaTest (const uint8_t * src_u8)
   uint32_t *src;
 
   // convert UTF-8 to UCS-4 (Unicode))
-  if (!(src = u8_to_u32 (src_u8, u8_strlen (src_u8) + 1, NULL, &len)))
+  if (!(src = u8_to_u32 (src_u8, strlen ((const char *)src_u8) + 1, NULL, &len)))
     {
       printf ("u8_to_u32(%s) failed (%d)\n", src_u8, errno);
       return NULL;

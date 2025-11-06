@@ -1,4 +1,5 @@
- 
+
+#ifdef UIDNA_SOURCES 
 #include "u_types.cc"
 #include "u_punycode.cc"
 #include "u_trie.cc"
@@ -10,5 +11,6 @@
 #include "u_edits.cc"
 #include "u_norm2.cc"
 #include "u_uts46.cc"
+#endif
 
 #include "u_idn2.cc"

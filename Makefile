@@ -19,6 +19,17 @@ SHARED_LIB = $(OUTDIR)/$(LIBNAME).$(SHARED_EXT)
 CFLAGS += -fPIC -std=c++17
 CFLAGS_OPTIMIZE ?= -O2
 
+# define WITHOUT_IDN to self-contained library
+# or WITH_ICU=<flags to compile with ICU>
+ifndef WITHOUT_IDN
+WITH_ICU ?= -licuuc -licudata
+else
+CFLAGS += -DUIDNA_SOURCES=1
+WITH_ICU :=
+endif
+
+UIDNA_LIBCXX=stdc++
+
 all: $(STATIC_LIB) $(SHARED_LIB) test
 
 static: $(STATIC_LIB)
@@ -45,17 +56,29 @@ install-shared: $(SHARED_LIB)
 	@$(MKDIR) $(PREFIX)/lib
 	$(CP) $(SHARED_LIB) $(PREFIX)/lib
 
+ifndef WITHOUT_IDN
+install-include:
+	@$(MKDIR) $(PREFIX)/include
+	$(CP)  include/idn2.h $(PREFIX)/include
+else
 install-include:
 	@$(MKDIR) $(PREFIX)/include
 	$(CP) -r include/* $(PREFIX)/include
+endif
 
 install-pc: $(PREFIX)/lib/pkgconfig/$(LIBNAME).pc
 
 install: install-static install-shared install-include install-pc
 
-test: $(STATIC_LIB)
-	$(MAKE) -C tests/icu OUTDIR=$(abspath $(OUTDIR))
-	$(MAKE) -C tests/idn2 OUTDIR=$(abspath $(OUTDIR))
+ifdef WITHOUT_IDN
+test-icu: $(STATIC_LIB)
+	$(MAKE) -C tests/icu OUTDIR=$(abspath $(OUTDIR)) LIBNAME=$(LIBNAME) UIDNA_LIBCXX=$(UIDNA_LIBCXX) WITH_ICU="$(WITH_ICU)"
+endif
+
+test-idn2: $(STATIC_LIB)
+	$(MAKE) -C tests/idn2 OUTDIR=$(abspath $(OUTDIR)) LIBNAME=$(LIBNAME) UIDNA_LIBCXX=$(UIDNA_LIBCXX) WITH_ICU="$(WITH_ICU)"
+
+test: test-icu test-idn2
 
 run-test: test
 	chmod +x $(OUTDIR)/uts46test
@@ -72,13 +95,13 @@ $(PREFIX)/lib/pkgconfig/$(LIBNAME).pc:
 	@echo '' >> $@
 	@echo 'Name: $(LIBNAME)' >> $@
 	@echo 'Description: IDN Library, extracted from ICU ' >> $@
-	@echo 'Version: 0.1.0' >> $@
+	@echo 'Version: 0.2.0' >> $@
 	@echo 'Cflags: -I$${includedir}' >> $@
-	@echo 'Libs: -L$${libdir} -l$(LIBNAME:lib%=%) -lstdc++' >> $@
+	@echo 'Libs: -L$${libdir} -l$(LIBNAME:lib%=%) -l$(UIDNA_LIBCXX) $(WITH_ICU)' >> $@
 	@echo 'Libs.private:  -L$(PREFIX)/lib' >> $@
 
 clean:
 	$(RM) $(STATIC_LIB) $(SHARED_LIB)
 	$(RM) -r $(OUTDIR)
 
-.PHONY: all clean install install-static install-shared install-include test static shared run-test
+.PHONY: all clean install install-static install-shared install-include test static shared run-test test-icu test-idn2

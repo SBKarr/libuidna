@@ -20,9 +20,12 @@
 ******************************************************************************
 */
 
+#ifdef UIDNA_SOURCES
 #include "u_unistr.h"
 #include "u_char.h"
 #include "u_macro.h"
+#endif
+
 #include "uts46test.h"
 
 #define U16_GET(s, start, i, length, c) do { \

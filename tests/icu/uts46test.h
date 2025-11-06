@@ -1,11 +1,25 @@
 
-#include "unicode/uidna.h"
 #include <stddef.h>
 #include <stdarg.h>
 #include <mutex>
 
+#ifdef UIDNA_SOURCES
+#include "unicode/uidna.h"
+
 #include "u_unistr.h"
 #include "u_uts46.h"
+#else
+#include <unicode/idna.h>
+
+namespace uidna {
+
+using icu::UnicodeString;
+using icu::IDNAInfo;
+using icu::UTS46;
+
+}
+
+#endif
 
 namespace uidna {
 

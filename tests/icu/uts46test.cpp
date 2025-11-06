@@ -15,8 +15,10 @@
 */
 
 #include "uts46test.h"
+#ifdef UIDNA_SOURCES
 #include "u_macro.h"
 #include "u_norm2.h"
+#endif
 #include <unistd.h>
 #include <stdio.h>
 #include <limits.h>

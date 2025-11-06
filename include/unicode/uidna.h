@@ -16,8 +16,14 @@
  *   created by: Ram Viswanadha
  */
 
-#ifndef MODULES_IDN_UIDNA_H_
-#define MODULES_IDN_UIDNA_H_
+#ifndef _UIDNA_MODULES_IDN_UIDNA_H_
+#define _UIDNA_MODULES_IDN_UIDNA_H_
+
+#ifndef UIDNA_SOURCES
+
+#include_next <unicode/uidna.h>
+
+#else
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -816,3 +822,4 @@ U_CAPI int32_t u_nameToUnicodeUTF8(uint32_t options, const char *name, int32_t l
 		char *dest, int32_t capacity, UIDNAInfo *pInfo, UErrorCode *pErrorCode);
 
 #endif /* MODULES_IDN_UIDNA_H_ */
+#endif
