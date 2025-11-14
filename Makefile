@@ -18,13 +18,15 @@ SHARED_LIB = $(OUTDIR)/$(LIBNAME).$(SHARED_EXT)
 
 CFLAGS += -fPIC -std=c++17
 CFLAGS_OPTIMIZE ?= -O2
+CFLAGS_TARGET :=
+
 
 # define WITHOUT_IDN to self-contained library
 # or WITH_ICU=<flags to compile with ICU>
 ifndef WITHOUT_IDN
 WITH_ICU ?= -licuuc -licudata
 else
-CFLAGS += -DUIDNA_SOURCES=1
+CFLAGS_TARGET += -DUIDNA_SOURCES=1
 WITH_ICU :=
 endif
 
@@ -38,7 +40,7 @@ shared: $(SHARED_LIB)
 
 $(OUTDIR)/$(LIBNAME).o: src/uidna.cpp
 	@$(MKDIR) $(OUTDIR)
-	$(CXX) $(CFLAGS) $(CFLAGS_OPTIMIZE) -Iinclude -c -o $@ $^
+	$(CXX) $(CFLAGS) $(CFLAGS_TARGET) $(CFLAGS_OPTIMIZE) -Iinclude -c -o $@ $^
 
 $(STATIC_LIB): $(OUTDIR)/$(LIBNAME).o
 	@$(MKDIR) $(OUTDIR)
