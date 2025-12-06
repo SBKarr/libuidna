@@ -2,6 +2,8 @@
 
 This code extracted from ICU project to provide simple IDN library.
 
+By default, this library can replace libidn2 in cURL builds to use icu4c
+
 See include/unicode/uidna.h for API
 
 Can be build with any modern C++ (C++14, C11) compiler. No external libraries required.

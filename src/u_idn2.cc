@@ -1,10 +1,10 @@
 
 #ifdef UIDNA_SOURCES 
 #include "u_types.h"
-#else
-#include <string>
 #endif
 
+#include <string>
+#include <string.h>
 #include <unicode/uidna.h>
 
 #include "idn2.h"
@@ -323,13 +323,7 @@ extern "C" void idn2_free(void *ptr) {
 }
 
 extern "C" const char* idn2_check_version(const char *req_version) {
-#if __APPLE__
 	if (!req_version || strcmp(req_version, IDN2_VERSION) <= 0) {
-#elif __ANDROID__
-	if (!req_version || strcmp(req_version, IDN2_VERSION) <= 0) {
-#else
-	if (!req_version || strverscmp(req_version, IDN2_VERSION) <= 0) {
-#endif
 		return IDN2_VERSION;
 	}
 
